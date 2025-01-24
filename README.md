@@ -18,4 +18,4 @@ To run the **Space Invaders** game in Java, follow these steps:
    ```bash
    java --module-path /path/to/javafx-sdk-<version>/lib --add-modules javafx.controls,javafx.fxml -jar dist/SpaceInvaders.jar```
 
-  Note: Replace /path/to/javafx-sdk-<version> with the actual path to your JavaFX SDK.
+     Note: Replace /path/to/javafx-sdk-<version> with the actual path to your JavaFX SDK.
