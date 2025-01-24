@@ -3,7 +3,7 @@ package SpaceInvaders;
 import javafx.application.Application;
 
 /**
- * Criação da classe main do projeto
+ * Main class of the project
  * @author pedro
  */
 public class SpaceInvadersMain{
