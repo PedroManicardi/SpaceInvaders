@@ -2,762 +2,747 @@ package Engine;
 import Elementos.*;
 import InterfaceGrafica.*;
 
-
 import java.util.Random;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-/** Classe responsável pelo funcionamento do jogo. */
+/** Class responsible for the game's functionality. */
 public class Engine{  
     
-    /** Construtor da Classe Engine
-     *@param gc - do tipo GraphicsContext do JavaFX
+    /** Constructor for the Engine Class
+     *@param gc - of type GraphicsContext from JavaFX
      */
     public Engine(GraphicsContext gc){
         this.gc = gc;
-        fase = 1;
-        pontos = 0;
+        phase = 1;
+        score = 0;
     }
     
-    /** GraphicsContext do JavaFX */
+    /** GraphicsContext from JavaFX */
     GraphicsContext gc;
     
-    /** Objeto da Classe tela responsável por criar o Display. */
-    public Tela Tela;
+    /** Object of the Screen class responsible for creating the Display. */
+    public Screen screen;
     
     /**
-    * Pontuação do Jogador.
+    * Player's score.
     */
-    private int pontos;
-    
+    private int score;
     
     /**
-    * Fase em que o Jogador está.
+    * The phase the player is in.
     */
-    private int fase;
-    
+    private int phase;
     
     /**
-    * Sequência de Vetores que serão utilizados .
+    * Sequence of Vectors to be used.
     */
-    private final ArrayList<Tiro> tiroCanhao = new ArrayList();
-    private final ArrayList<Tiro> tiroAliens = new ArrayList();
-    private final ArrayList<Barreira> barreiras = new ArrayList();
+    private final ArrayList<Shot> cannonShots = new ArrayList();
+    private final ArrayList<Shot> alienShots = new ArrayList();
+    private final ArrayList<Barrier> barriers = new ArrayList();
     public final ArrayList<Alien> aliens = new ArrayList();
-    public final ArrayList<Alien> alien_especial = new ArrayList();
+    public final ArrayList<Alien> specialAlien = new ArrayList();
     
-    /** Objeto da Classe Musica responsável pelos efeitos sonoros. .
-    */
-    private Musica musica;
+    /** Object of the Music class responsible for sound effects. */
+    private Music music;
     
-    /** Objeto da Classe Canhao que representa o Jogador .
-    */
-    public Canhao nave;
+    /** Object of the Cannon class representing the Player. */
+    public Cannon ship;
     
-  
+    /** Alien and Cannon shots will be fired at certain intervals. */
+    private long cannonShotTimer;
+    private long alienShotTimer;
     
-    /** Os Tiros dos Aliens e do Canhão serão dados num certo intervalo de tempo. */  
-    private long temporiza_tiro_canhao;
-    private long temporiza_tiro_alien;
-    
-    
-    /** Cria o vetor de Aliens e o preenche. 
-     @param fase - é preciso saber a fase do jogo, pois, conforme maior a fase,
-     *  mais embaixo os Aliens começam.
+    /** Creates the vector of Aliens and fills it. 
+     @param phase - the game's phase is required, as the higher the phase,
+     * the lower the Aliens start.
      */
-    public void criaAliens(int fase){
-           
+    public void createAliens(int phase){
         
-        //Definição da imagem dos 3 tipos de Aliens
-        Image alien1 = new Image("Imagens/alien1.png", 40, 40, false, false);
-        Image alien2 = new Image("Imagens/alien2.png", 40, 40, false, false);
-        Image alien3 = new Image("Imagens/alien3.png", 40, 40, false, false);
-        Image imag = alien1;
+        // Defining the image of the 3 types of Aliens
+        Image alien1 = new Image("Images/alien1.png", 40, 40, false, false);
+        Image alien2 = new Image("Images/alien2.png", 40, 40, false, false);
+        Image alien3 = new Image("Images/alien3.png", 40, 40, false, false);
+        Image img = alien1;
         int i, j;
         
-        //Variável para verificar qual tipo de Aliens deve ser inserido
-        int tamanho = 0;
+        // Variable to check which type of Alien should be inserted
+        int size = 0;
         for(j = 50; j < 300; j+=50){
             for(i = 50; i < 600; i+=50){
             
-                if(tamanho == 11){
-                    imag = alien2;
+                if(size == 11){
+                    img = alien2;
                 }
-                else if(tamanho == 33){
-                    imag = alien3;
+                else if(size == 33){
+                    img = alien3;
                 }
                 
-                Alien a = new Alien(i , j + (fase-1)* 100, 0, 40, 10, 3, imag);
+                Alien a = new Alien(i , j + (phase-1)* 100, 0, 40, 10, 3, img);
                 aliens.add(a);
                 
-                tamanho ++;
+                size ++;
             }
         }
     }
     
     /**
-    * Cria o vetor de Barreiras e o preenche com 4 barreiras.
+    * Creates the vector of Barriers and fills it with 4 barriers.
     */    
 
-    public void criaBarreira(){
+    public void createBarrier(){
         
-        //Inicialmente utiliza a imagem da barreira não danificada
-        Image ImagBarreira = new Image("Imagens/barreira.png", 150, 150, false, false);
-        Barreira b1 = new Barreira(100, 550, 110, 90, 15, ImagBarreira);
-        Barreira b2 = new Barreira(450, 550, 110, 90, 15, ImagBarreira);
-        Barreira b3 = new Barreira(800, 550, 110, 90, 15, ImagBarreira);
-        Barreira b4 = new Barreira(1150, 550, 110, 90, 15, ImagBarreira);
-        barreiras.add(b1);
-        barreiras.add(b2);
-        barreiras.add(b3);
-        barreiras.add(b4);
+        // Initially uses the image of the undamaged barrier
+        Image barrierImage = new Image("Images/barrier.png", 150, 150, false, false);
+        Barrier b1 = new Barrier(100, 550, 110, 90, 15, barrierImage);
+        Barrier b2 = new Barrier(450, 550, 110, 90, 15, barrierImage);
+        Barrier b3 = new Barrier(800, 550, 110, 90, 15, barrierImage);
+        Barrier b4 = new Barrier(1150, 550, 110, 90, 15, barrierImage);
+        barriers.add(b1);
+        barriers.add(b2);
+        barriers.add(b3);
+        barriers.add(b4);
     }
 
     /**
-    * Cria o objeto Canhao.
+    * Creates the Cannon object.
     */
-    public void criaCanhao(){
-        Image ImagCanhao = new Image("Imagens/canhao.png", 40, 40, false, false);
-        nave = new Canhao(200,700, 40, 35, 3, ImagCanhao);
+    public void createCannon(){
+        Image cannonImage = new Image("Images/cannon.png", 40, 40, false, false);
+        ship = new Cannon(200,700, 40, 35, 3, cannonImage);
     }
     
     /**
-    *Cria o vetor de Tiros do Canhão conforme solicitado pelo Jogador.
+    * Creates the Cannon's Shots as requested by the Player.
     */
-     public void criaTiro_Canhao(){
+    public void createCannonShot(){
         
-        //Para dificultar, o Player poderá atirar a cada 1,5 segundos
-        if(System.currentTimeMillis() - temporiza_tiro_canhao > 1500){
-            Image ImagTiro = new Image("Imagens/tirocanhao.png", 40, 40, false, false);
-            Tiro tiro = new Tiro(nave.pos_x, nave.pos_y - 1 , 5, 15, 1, ImagTiro);
-            tiroCanhao.add(tiro);
-            musica = new Musica();
-            musica.musicaTiro();
+        // To make it harder, the Player can shoot every 1.5 seconds
+        if(System.currentTimeMillis() - cannonShotTimer > 1500){
+            Image shotImage = new Image("Images/cannonShot.png", 40, 40, false, false);
+            Shot shot = new Shot(ship.pos_x, ship.pos_y - 1 , 5, 15, 1, shotImage);
+            cannonShots.add(shot);
+            music = new Music();
+            music.playShotSound();
             
-            temporiza_tiro_canhao = System.currentTimeMillis();
+            cannonShotTimer = System.currentTimeMillis();
         }
     }
     
     /**
-    * Cria a Tela do jogo.
+    * Creates the game's screen.
     */
-    public void criaTela(){
+    public void createScreen(){
         
-        Tela = new Tela(gc, this);
-        Tela.inicia();  
+        screen = new Screen(gc, this);
+        screen.initialize();  
     }
     
     /**
-    * Aqui é criado o Tiro dos Invasores de maneira aleatória.
-    * Os tiros acontecem com maior frequência conforme o jogador avança de fase
-    * Além dos tiros aleatórios, é criado um tiro de um aliens 
-    * que esteja na coluna mais próxima a do canhão
+    * Creates the Alien's shots randomly.
+    * The shots happen more frequently as the player advances to higher phases.
+    * In addition to random shots, a shot is created from an alien
+    * that is in the column closest to the cannon.
     */
-    public void criaTiro_Aliens(){
+    public void createAlienShot(){
         
-        Alien aux_inv;
-        Random gerador = new Random();
+        Alien auxAlien;
+        Random generator = new Random();
         
-        int colunaCanhao, colunaInvasor;
-        int invasor = -1;
+        int cannonColumn, alienColumn;
+        int alienIndex = -1;
         
         int i;
         
-        /**Buscar um valor aleatório. */
-        int valor = (int) Math.floor(Math.random() * 300) + 1500; 
+        /** Generate a random value. */
+        int value = (int) Math.floor(Math.random() * 300) + 1500; 
         
-        Image img = new Image("Imagens/tiroalien.png", 35, 45, false, false);
+        Image shotImg = new Image("Images/alienShot.png", 35, 45, false, false);
         
-        /** Os tiros ocorrem num certo intervalo de tempo. */
-        if(System.currentTimeMillis() - temporiza_tiro_alien > valor)
+        /** Shots happen at certain intervals. */
+        if(System.currentTimeMillis() - alienShotTimer > value)
         {
-            colunaCanhao = nave.getPos_x();
+            cannonColumn = ship.getPos_x();
             
-            /** Procura um invasor que esteja na coluna mais próxima da do Canhão. */
+            /** Looks for an alien in the column closest to the Cannon. */
             for(i = 0; i < aliens.size(); i++){
-                colunaInvasor = aliens.get(i).getPos_x();
-                if(colunaInvasor >= colunaCanhao && colunaInvasor <= colunaCanhao + 4){
-                    invasor = i;
+                alienColumn = aliens.get(i).getPos_x();
+                if(alienColumn >= cannonColumn && alienColumn <= cannonColumn + 4){
+                    alienIndex = i;
                     break;
                 }
             }
             
-            /**Caso encontre um invasor, gera o Tiro. */
-            if(invasor != -1){
-                tiroAliens.add(new Tiro(aliens.get(invasor).getPos_x(), 
-                            aliens.get(invasor).getPos_y() + 2 , 30, 30, 1, img));
+            /** If an alien is found, create a shot. */
+            if(alienIndex != -1){
+                alienShots.add(new Shot(aliens.get(alienIndex).getPos_x(), 
+                            aliens.get(alienIndex).getPos_y() + 2 , 30, 30, 1, shotImg));
             }
  
             
-            /**Gera os tiros aleatórios. */
-            for(i = 0; i < fase ; i++){
+            /** Creates random shots. */
+            for(i = 0; i < phase ; i++){
                 
-                int j = gerador.nextInt(aliens.size());
-                aux_inv = aliens.get(j);
-                tiroAliens.add(new Tiro(aux_inv.getPos_x(), 
-                            aux_inv.getPos_y() + 2 , 30, 30, 1, img));
+                int j = generator.nextInt(aliens.size());
+                auxAlien = aliens.get(j);
+                alienShots.add(new Shot(auxAlien.getPos_x(), 
+                            auxAlien.getPos_y() + 2 , 30, 30, 1, shotImg));
             }
             
-            /** Resetar o temporizador de tiros de aliens. */
-            temporiza_tiro_alien = System.currentTimeMillis();
+            /** Reset the alien shot timer. */
+            alienShotTimer = System.currentTimeMillis();
         }
     }
-    
-    
+
+        
     /**
-     * Cria o vetor de Aliens vermelhos, os quais
-     * aparecem periodicamente no topo da tela.
-    */
-    public void criaAlienEspecial(){
+     * Creates the vector of Red Aliens, which
+     * appear periodically at the top of the screen.
+     */
+    public void createSpecialAlien(){
         
-        Image imag = new Image("Imagens/alien_especial.png", 60, 60, false, false);    
+        Image image = new Image("Images/special_alien.png", 60, 60, false, false);    
         
-        int valor = (int) Math.floor(Math.random() * 305) + 1500; 
-        if(System.currentTimeMillis() - temporiza_tiro_alien > valor && alien_especial.isEmpty())
+        int value = (int) Math.floor(Math.random() * 305) + 1500; 
+        if(System.currentTimeMillis() - alienShotTimer > value && specialAlien.isEmpty())
         {
             
-            Alien a = new Alien(1300, 10, 1, 50, 50, 1, imag); 
-            alien_especial.add(a);
+            Alien a = new Alien(1300, 10, 1, 50, 50, 1, image); 
+            specialAlien.add(a);
             
-            temporiza_tiro_alien = System.currentTimeMillis();
+            alienShotTimer = System.currentTimeMillis();
         }
     }
 
     /**
-     * Mètodo que move os Aliens
-     * @param dificuldade - é preciso saber a dificuldade do jogo
-     *     na dificuldade Difícil, os aliens se movem mais rápido
-     *      que no modo normal
-     * @return fim - indica que os aliens chegaram na borda inferior e o jogo deve acabar.
+     * Method that moves the Aliens
+     * @param difficulty - it's important to know the game difficulty
+     *     in Hard mode, aliens move faster than in Normal mode
+     * @return end - indicates that the aliens reached the bottom border and the game should end.
      */
-    public boolean moveAliens(String dificuldade){
+    public boolean moveAliens(String difficulty){
         
-        boolean inverte = false;
-        boolean fim = false;
+        boolean reverseDirection = false;
+        boolean end = false;
         
-        int i;
-        for(i = 0; i< aliens.size(); i++){
-            
-            /**
-            * Caso algum invasor esteja prestes a sair
-            *  da borda, devemos inverter o sentido da movimentação.
-            */
-            if(aliens.get(i).getPos_x() <= 5 && aliens.get(i).getDirecao() == 1){
-                inverte = true;
-            }
-            if(aliens.get(i).getPos_x() >= 1340 && aliens.get(i).getDirecao() == 0){
-                inverte = true;
-            }
-            
-            /**
-            * Se os aliens passarem o nível do canhão,
-            *   o jogo acaba.
-            */
-            if(aliens.get(i).getPos_y() >= 650){
-                fim = true;
-            }
-        }
-        
-        /** Efetivamente movimentando os aliens com o método movimenta. */
-        for (i = 0; i < aliens.size(); i++){
-            
-            /** Se for o ultimo alien, deve mover mais rápido. */
-            if(aliens.size() == 1){
-                aliens.get(i).movimenta(inverte, true, dificuldade);
-            }
-            else{
-                aliens.get(i).movimenta(inverte, false, dificuldade);
-            }
-        }
-        
-        return fim;
-        
-    }
-    
-    /**
-    * Movimentação do Alien especial.
-    */
-    public void moveAlienEspecial(){
-        int i;
-        int pos_x;
-        ArrayList<Alien> remove_alien = new ArrayList<>();
-        Alien alien_aux;
-        for(i = 0; i < alien_especial.size(); i++){
-            alien_aux =  alien_especial.get(i);
-            
-            /** Se o alien atingir a borda da tela, deve ser removido. */
-            if(alien_aux.getPos_x() <= 2){
-                remove_alien.add(alien_aux);
-            }
-            
-            /** Mover efetivamente o alien, -4 foi obtido experimentalmente. */
-            else{
-               pos_x = alien_aux.getPos_x();
-               alien_aux.setPosicao(pos_x - 4,10);
-            }
-        }
-        
-        /** Remover os Aliens que chegarem na borda. */
-        if(!remove_alien.isEmpty()){
-            alien_especial.removeAll(remove_alien);
-            remove_alien.clear();
-        } 
-    }
-    
-    /**
-    * Esse método verifica, primeiramente, se é possível
-    * realizar a movimentação do canhao, ou seja, se ele
-    * ainda não chegou na borda.
-    * @param direcao - precisa-se saber se o Canhao está indo para a direita
-    *   ou para a esqueda.
-    */
-    public void moveCanhao(int direcao){
-        
-        //Move para a direita
-        if(nave.getPos_x() >=2 && direcao == 0){
-            nave.acrescentaPosicao(-9, 0);
-        }
-        
-        //Move para a esquerda
-        if(nave.getPos_x() <= 1340  && direcao == 1){
-            nave.acrescentaPosicao(9, 0);
-        }
-    }
-
-    
-    /**
-    *   Altera as posições dos tiros do canhao 
-    *   Verifica-se se o tiro esta ultrapassando o limite do display para
-    *   removê-lo
-    *   Também verifica-se colisões dos tiros e dos aliens
-    *   Caso ocorra, os tiros e os aliens são removidos.
-    */
-    public void moveTirosCanhao(){
-
-        Tiro tiro_aux;
-        Alien alien_aux;
-        ArrayList<Tiro> remove_tiro = new ArrayList<>();
-        ArrayList<Alien> remove_alien = new ArrayList<>();
-
-        int i,j;
-        
-        /**
-        * Percorre o vetor de tiros e verica-se se ele está
-        *   apto a se mover.
-        */
-        for(i = 0; i < tiroCanhao.size(); i++){
-            tiro_aux = tiroCanhao.get(i);
-            if(tiro_aux.getPos_y() >= 0){
-               tiro_aux.acrescentaPosicao(0, -3);
-                for(j = 0; j < aliens.size(); j++){
-                   alien_aux = aliens.get(j);
-                   if(alien_aux.intersects(tiro_aux)){
-                       remove_tiro.add(tiro_aux);
-                       remove_alien.add(alien_aux);  
-                       
-                       /** Se acertar o tiro no alien comum, recebe 10 pontos. */
-                       pontos +=10;
-                   }
-                }
-                
-                
-                for(j = 0; j < alien_especial.size(); j++){
-                   alien_aux = alien_especial.get(j);
-                   if(alien_aux.intersects(tiro_aux)){
-                       
-                       remove_tiro.add(tiro_aux);
-                       remove_alien.add(alien_aux);  
-                       
-                       /** Se acertar o alien especial, ganha 100 pontos. */
-                       pontos += 100;
-                   }
-                }
-            }
-            
-            /** Caso o tiro esteja saindo por cima da tela. */
-            else{
-                remove_tiro.add(tiro_aux); 
-            }
-        }
-        
-        /**
-        * Remove os aliens e os tiros marcados por participarem
-        *  de uma colisão.
-        */
-        if(!remove_tiro.isEmpty()){
-            tiroCanhao.removeAll(remove_tiro);
-            remove_tiro.clear();
-        }
-        if(!remove_alien.isEmpty()){
-            aliens.removeAll(remove_alien);
-            alien_especial.removeAll(remove_alien);
-            remove_alien.clear();
-        }        
-    }
-    
-    /**
-     * Método responsável pela movimentação dos tiros dos Aliens
-     * @param dificuldade - indica a dificuldade do jogo.
-     * Caso a dificuldade seja a Difícil, a movimentação deve ser
-     *    mais rápida que a no modo Normal.
-     */
-    public void moveTirosAlien(String dificuldade){
-
-        Tiro tiro_aux;
-        ArrayList<Tiro> remove_tiro = new ArrayList<>();
-        
-        int i,j;
-        for(i = 0; i < tiroAliens.size(); i++){
-            tiro_aux = tiroAliens.get(i);
-            if(tiro_aux.getPos_y() <= 740){
-               if("NORMAL".equals(dificuldade)){
-                    tiro_aux.acrescentaPosicao(0, 2);
-               }
-               else{
-                    tiro_aux.acrescentaPosicao(0, 3);
-               }
-            }
-            else{
-                remove_tiro.add(tiro_aux);
-            }
-        }
-        if(!remove_tiro.isEmpty()){
-            tiroAliens.removeAll(remove_tiro);
-            remove_tiro.clear();
-        }
-    }
-    
-    /** 
-     * Método que detecta colisão entre os tiros dos Aliens e do Canhão
-     * Nese caso, remove-se os dois tiros.
-     */
-    public void colisaoTiroTiro(){
-        Tiro nave_tiro;
-        Tiro alien_tiro;
-        ArrayList<Tiro> tirocanhao_remove = new ArrayList<>();
-        ArrayList<Tiro> tiroalien_remove = new ArrayList<>();
-        int i, j;
-        
-        for(i = 0; i < tiroCanhao.size(); i++){
-            nave_tiro = tiroCanhao.get(i);
-            for(j = 0; j < tiroAliens.size(); j++){
-                alien_tiro = tiroAliens.get(j);
-                if(nave_tiro.intersects(alien_tiro)){
-                    tirocanhao_remove.add(nave_tiro);
-                    tiroalien_remove.add(alien_tiro);
-                }
-            }
-        }
-        if(tirocanhao_remove.isEmpty() == false){
-            tiroCanhao.removeAll(tirocanhao_remove);
-            tirocanhao_remove.clear();
-        }
-        if(tiroalien_remove.isEmpty() == false){
-            tiroAliens.removeAll(tiroalien_remove);
-            tiroalien_remove.clear();
-        }
-    }
-
-    /** Método que processará a colisão entre Tiro do Canhão e dos Aliens com Barreiras
-     Nesse caso, o Tiro será removido e a barreira perdera uma vida.
-    */
-    public void colisaoTiroBarreira(){
-
-        Tiro canhao_tiro, alien_tiro;
-        Barreira barreira_aux;
-        ArrayList<Tiro> remove_tiro = new ArrayList<>();
-        ArrayList<Barreira> remove_barreira = new ArrayList<>();
-        
-       /**
-        * A cada 5 tiros, a imagem da barreira mudará.
-        */
-        Image barreiradanificada1 = new Image("Imagens/barreiradanificada.png", 150, 150, false, false);
-        Image barreiradanificada2 = new Image("Imagens/barreiradanificada2.png", 130, 130, false, false);
-  
-        int i, j;
-        
-        for(i = 0; i < tiroCanhao.size(); i++){
-            canhao_tiro = tiroCanhao.get(i);
-            for(j = 0; j < barreiras.size(); j++){
-                barreira_aux = barreiras.get(j);
-                if(canhao_tiro.intersects(barreira_aux)){
-                    remove_tiro.add(canhao_tiro);
-                    barreira_aux.setVida();
-                    
-                    /** Se receber 5 tiros, a imagem da barreira muda */
-                    if(barreira_aux.getVida() <= 10 && barreira_aux.getVida() > 5 ){                            
-                        barreira_aux.setImag(barreiradanificada1);
-                    }
-                    
-                    /** Se receber 10 tiros, a imagem da barreira muda novamente */
-                    else if(barreira_aux.getVida() <= 5 && barreira_aux.getVida() > 0){
-       
-                        barreira_aux.setImag(barreiradanificada2);
-                        barreira_aux.setPosicao(barreira_aux.getPos_x(),570);
-                    }
-                    
-                    /** Recebendo 15 tiros, a barreira desaparece */
-                    else if(barreira_aux.getVida() <= 0){
-                        remove_barreira.add(barreira_aux);
-                    }
-                }
-            }
-        } 
-        
-        /**
-        * Verifica-se, de maneira análogo ao Tiro do Canhão,
-        *   a colisão entre os tiros dos aliens com as barreiras.
-        */
-        for(i = 0; i < tiroAliens.size(); i++){
-            alien_tiro = tiroAliens.get(i);
-            for(j = 0; j < barreiras.size(); j++){
-                barreira_aux = barreiras.get(j);
-                if(alien_tiro.intersects(barreira_aux)){
-                    remove_tiro.add(alien_tiro);
-                    
-                    barreira_aux.setVida();
-                    if(barreira_aux.getVida() <= 10 && barreira_aux.getVida() > 5 ){                            
-                        barreira_aux.setImag(barreiradanificada1);
-                    }
-                    else if(barreira_aux.getVida() <= 5 && barreira_aux.getVida() > 0){
-       
-                        barreira_aux.setImag(barreiradanificada2);
-                        barreira_aux.setPosicao(barreira_aux.getPos_x(),570);
-                        
-                    }
-                    else if(barreira_aux.getVida() <= 0){
-                        remove_barreira.add(barreira_aux);
-                    }
-                }
-            }
-        }    
-        
-        /**
-        * Deve-se remover os tiros e as barreiras marcadas para remoção.
-        */
-        if(remove_tiro.isEmpty() == false){
-            tiroCanhao.removeAll(remove_tiro);
-            tiroAliens.removeAll(remove_tiro);
-            remove_tiro.clear();
-        }
-        if(remove_barreira.isEmpty() == false){
-            barreiras.removeAll(remove_barreira);
-            remove_barreira.clear();
-        }
-    }
-    
-    /**
-    * Método que verifica colisões entre os tiros dos aliens
-    *   e o Canhão
-    * @return atingido -  um boolean para pausar o jogo caso ocorra a colisão.
-    */
-    public boolean ColisaoCanhaoTiro(){
-        int i;
-        boolean atingido = false;
-        Tiro tiro_aux;
-        ArrayList<Tiro> remove_tiro = new ArrayList();
-        for(i = 0; i < tiroAliens.size(); i++){
-            tiro_aux = tiroAliens.get(i);
-            if(tiro_aux.intersects(nave)){
-                remove_tiro.add(tiro_aux);
-                tiroAliens.removeAll(remove_tiro);
-                remove_tiro.clear();
-                nave.setVida();
-                
-                /** O canhão volta para o início. */
-                nave.setPosicao(200,700);
-                atingido = true;
-                
-            }
-        }
-        return atingido;
-    }
-    
-    /**
-    * Esse método cria os objetos necessário para o início do jogo
-    * Também cria o objeto música, a qual toca de fundo durante o jogo
-    *   e tem um efeito sonoro caso o Player atire.
-    */
-    public void IniciaGame() {
-        
-        criaTela();
-        criaCanhao();
-        criaBarreira();
-        criaAliens(fase);
-        musica = new Musica();
-        musica.iniciaMusica();
-    }
-    
-    /**
-     * Métodos que desenham os elementos: Canhão, Aliens, Barreiras e Tiros. 
-     * @param gc - do GraphicsContext do JavaFX
-     */
-    public void desenhaCanhao(GraphicsContext gc){
-
-       gc.drawImage( nave.imagem, nave.pos_x, nave.pos_y );
-    } 
-    
-    public void desenhaAliens(GraphicsContext gc){
         int i;
         for(i = 0; i < aliens.size(); i++){
-            gc.drawImage( aliens.get(i).imagem, aliens.get(i).pos_x, aliens.get(i).pos_y );
-        }
-        
-        for(i = 0; i < alien_especial.size(); i++){
-             gc.drawImage( alien_especial.get(i).imagem, alien_especial.get(i).pos_x, alien_especial.get(i).pos_y );
-        }
-    }
-    
-    public void desenhaTiroCanhao(GraphicsContext gc){
-        int i;
-        for(i = 0; i < tiroCanhao.size(); i++){
-            gc.drawImage( tiroCanhao.get(i).imagem, tiroCanhao.get(i).pos_x, tiroCanhao.get(i).pos_y );
-        }
-    }
-    
-     public void desenhaTiroAliens(GraphicsContext gc){
-        int i;
-        for(i = 0; i < tiroAliens.size(); i++){
-            gc.drawImage( tiroAliens.get(i).imagem, tiroAliens.get(i).pos_x, tiroAliens.get(i).pos_y );
-        }
-    }
-    
-    public void desenhaBarreiras(GraphicsContext gc){
-        
-        int i;
-       
-        for(i = 0; i < barreiras.size(); i++){
             
-            gc.drawImage(barreiras.get(i).imagem, barreiras.get(i).pos_x, barreiras.get(i).pos_y);
-           
+            /**
+            * If an invader is about to exit
+            * the border, the direction of movement should be reversed.
+            */
+            if(aliens.get(i).getPos_x() <= 5 && aliens.get(i).getDirection() == 1){
+                reverseDirection = true;
+            }
+            if(aliens.get(i).getPos_x() >= 1340 && aliens.get(i).getDirection() == 0){
+                reverseDirection = true;
+            }
+            
+            /**
+            * If the aliens pass the cannon level,
+            *   the game ends.
+            */
+            if(aliens.get(i).getPos_y() >= 650){
+                end = true;
+            }
+        }
+        
+        /** Actually moving the aliens using the move method. */
+        for (i = 0; i < aliens.size(); i++){
+            
+            /** If it's the last alien, it should move faster. */
+            if(aliens.size() == 1){
+                aliens.get(i).move(reverseDirection, true, difficulty);
+            }
+            else{
+                aliens.get(i).move(reverseDirection, false, difficulty);
+            }
+        }
+        
+        return end;
+        
+    }
+
+    /**
+    * Movement of the special Alien.
+    */
+    public void moveSpecialAlien(){
+        int i;
+        int pos_x;
+        ArrayList<Alien> removeAlien = new ArrayList<>();
+        Alien tempAlien;
+        for(i = 0; i < specialAlien.size(); i++){
+            tempAlien =  specialAlien.get(i);
+            
+            /** If the alien reaches the screen border, it should be removed. */
+            if(tempAlien.getPos_x() <= 2){
+                removeAlien.add(tempAlien);
+            }
+            
+            /** Actually move the alien, -4 was obtained experimentally. */
+            else{
+                pos_x = tempAlien.getPos_x();
+                tempAlien.setPosition(pos_x - 4, 10);
+            }
+        }
+        
+        /** Remove the aliens that reached the border. */
+        if(!removeAlien.isEmpty()){
+            specialAlien.removeAll(removeAlien);
+            removeAlien.clear();
+        } 
+    }
+
+    /**
+    * This method checks, first, if it's possible
+    * to move the cannon, i.e., if it has
+    * not yet reached the border.
+    * @param direction - it is necessary to know if the cannon is moving to the right
+    *   or to the left.
+    */
+    public void moveCannon(int direction){
+        
+        //Move to the right
+        if(cannon.getPos_x() >= 2 && direction == 0){
+            cannon.addPosition(-9, 0);
+        }
+        
+        //Move to the left
+        if(cannon.getPos_x() <= 1340  && direction == 1){
+            cannon.addPosition(9, 0);
         }
     }
-    
+
+
     /**
-     * Este método desenha as Vidas atuais do canhão na borda inferior da tela
-     * Caso o jogador seja atingido, uma vida some e o jogo pausa.
-     */
-    public void desenhaVidas(GraphicsContext gc){
+    *   Alters the positions of the cannon's shots 
+    *   Verifies if the shot is exceeding the screen limit to
+    *   remove it
+    *   Also checks for collisions between shots and aliens
+    *   If a collision occurs, both the shot and the alien are removed.
+    */
+    public void moveCannonShots(){
+
+        CannonShot tempShot;
+        Alien tempAlien;
+        ArrayList<CannonShot> removeShot = new ArrayList<>();
+        ArrayList<Alien> removeAlien = new ArrayList<>();
+
+        int i,j;
         
-        Image vida_imagem = new Image("Imagens/vida.png", 50, 50, false, false);
-        switch (nave.getVida()) {
+        /**
+        * Iterates over the shots and checks if they can move.
+        */
+        for(i = 0; i < cannonShots.size(); i++){
+            tempShot = cannonShots.get(i);
+            if(tempShot.getPos_y() >= 0){
+            tempShot.addPosition(0, -3);
+                for(j = 0; j < aliens.size(); j++){
+                tempAlien = aliens.get(j);
+                if(tempAlien.intersects(tempShot)){
+                    removeShot.add(tempShot);
+                    removeAlien.add(tempAlien);  
+                    
+                    /** If the shot hits a regular alien, 10 points are awarded. */
+                    score += 10;
+                }
+                }
+                
+                
+                for(j = 0; j < specialAlien.size(); j++){
+                tempAlien = specialAlien.get(j);
+                if(tempAlien.intersects(tempShot)){
+                    
+                    removeShot.add(tempShot);
+                    removeAlien.add(tempAlien);  
+                    
+                    /** If the shot hits the special alien, 100 points are awarded. */
+                    score += 100;
+                }
+                }
+            }
+            
+            /** If the shot is leaving the screen from the top. */
+            else{
+                removeShot.add(tempShot); 
+            }
+        }
+        
+        /**
+        * Removes the aliens and the shots involved
+        * in a collision.
+        */
+        if(!removeShot.isEmpty()){
+            cannonShots.removeAll(removeShot);
+            removeShot.clear();
+        }
+        if(!removeAlien.isEmpty()){
+            aliens.removeAll(removeAlien);
+            specialAlien.removeAll(removeAlien);
+            removeAlien.clear();
+        }        
+    }
+
+    /**
+     * Method responsible for moving the Alien's shots
+     * @param difficulty - indicates the game difficulty.
+     * If the difficulty is Hard, the movement should be
+     *    faster than in Normal mode.
+     */
+    public void moveAlienShots(String difficulty){
+
+        AlienShot tempShot;
+        ArrayList<AlienShot> removeShot = new ArrayList<>();
+        
+        int i,j;
+        for(i = 0; i < alienShots.size(); i++){
+            tempShot = alienShots.get(i);
+            if(tempShot.getPos_y() <= 740){
+            if("NORMAL".equals(difficulty)){
+                    tempShot.addPosition(0, 2);
+            }
+            else{
+                    tempShot.addPosition(0, 3);
+            }
+            }
+            else{
+                removeShot.add(tempShot);
+            }
+        }
+        if(!removeShot.isEmpty()){
+            alienShots.removeAll(removeShot);
+            removeShot.clear();
+        }
+    }
+
+    /** 
+     * Method that detects collisions between the shots of the Aliens and the Cannon
+     * In this case, both shots are removed.
+     */
+    public void collisionShotShot(){
+        CannonShot cannonShot;
+        AlienShot alienShot;
+        ArrayList<CannonShot> cannonShotsToRemove = new ArrayList<>();
+        ArrayList<AlienShot> alienShotsToRemove = new ArrayList<>();
+        int i, j;
+        
+        for(i = 0; i < cannonShots.size(); i++){
+            cannonShot = cannonShots.get(i);
+            for(j = 0; j < alienShots.size(); j++){
+                alienShot = alienShots.get(j);
+                if(cannonShot.intersects(alienShot)){
+                    cannonShotsToRemove.add(cannonShot);
+                    alienShotsToRemove.add(alienShot);
+                }
+            }
+        }
+        if(!cannonShotsToRemove.isEmpty()){
+            cannonShots.removeAll(cannonShotsToRemove);
+            cannonShotsToRemove.clear();
+        }
+        if(!alienShotsToRemove.isEmpty()){
+            alienShots.removeAll(alienShotsToRemove);
+            alienShotsToRemove.clear();
+        }
+    }
+
+    /** Method that processes the collision between Cannon and Alien Shots with Barriers
+     In this case, the Shot is removed, and the barrier loses a life.
+    */
+    public void collisionShotBarrier(){
+
+        CannonShot cannonShot, alienShot;
+        Barrier tempBarrier;
+        ArrayList<CannonShot> removeShot = new ArrayList<>();
+        ArrayList<Barrier> removeBarrier = new ArrayList<>();
+        
+    /**
+        * Every 5 shots, the barrier image will change.
+        */
+        Image damagedBarrier1 = new Image("Images/damaged_barrier.png", 150, 150, false, false);
+        Image damagedBarrier2 = new Image("Images/damaged_barrier2.png", 130, 130, false, false);
+
+        int i, j;
+        
+        for(i = 0; i < cannonShots.size(); i++){
+            cannonShot = cannonShots.get(i);
+            for(j = 0; j < barriers.size(); j++){
+                tempBarrier = barriers.get(j);
+                if(cannonShot.intersects(tempBarrier)){
+                    removeShot.add(cannonShot);
+                    tempBarrier.decreaseLife();
+                    
+                    /** If it receives 5 shots, the barrier image changes */
+                    if(tempBarrier.getLife() <= 10 && tempBarrier.getLife() > 5 ){                            
+                        tempBarrier.setImage(damagedBarrier1);
+                    }
+                    
+                    /** If it receives 10 shots, the barrier image changes again */
+                    else if(tempBarrier.getLife() <= 5 && tempBarrier.getLife() > 0){
+    
+                        tempBarrier.setImage(damagedBarrier2);
+                        tempBarrier.setPosition(tempBarrier.getPos_x(),570);
+                    }
+                    
+                    /** Receiving 15 shots, the barrier disappears */
+                    else if(tempBarrier.getLife() <= 0){
+                        removeBarrier.add(tempBarrier);
+                    }
+                }
+            }
+        } 
+        /**
+        * Checks for collisions between the alien shots and the barriers,
+        * similar to the Cannon Shot.
+        */
+        for(i = 0; i < alienShots.size(); i++){
+            alien_shot = alienShots.get(i);
+            for(j = 0; j < barriers.size(); j++){
+                barrier_aux = barriers.get(j);
+                if(alien_shot.intersects(barrier_aux)){
+                    remove_shot.add(alien_shot);
+                    
+                    barrier_aux.setHealth();
+                    if(barrier_aux.getHealth() <= 10 && barrier_aux.getHealth() > 5 ){                            
+                        barrier_aux.setImage(damagedBarrier1);
+                    }
+                    else if(barrier_aux.getHealth() <= 5 && barrier_aux.getHealth() > 0){
+            
+                        barrier_aux.setImage(damagedBarrier2);
+                        barrier_aux.setPosition(barrier_aux.getPos_x(),570);
+                    }
+                    else if(barrier_aux.getHealth() <= 0){
+                        remove_barrier.add(barrier_aux);
+                    }
+                }
+            }
+        }
+
+        /**
+        * Removes the shots and the barriers marked for removal.
+        */
+        if(remove_shot.isEmpty() == false){
+            cannonShots.removeAll(remove_shot);
+            alienShots.removeAll(remove_shot);
+            remove_shot.clear();
+        }
+        if(remove_barrier.isEmpty() == false){
+            barriers.removeAll(remove_barrier);
+            remove_barrier.clear();
+        }
+
+    /**
+    * Method that checks for collisions between the alien shots
+    * and the Cannon.
+    * @return hit - a boolean to pause the game if the collision occurs.
+    */
+    public boolean cannonShotCollision(){
+        int i;
+        boolean hit = false;
+        Shot shot_aux;
+        ArrayList<Shot> remove_shot = new ArrayList();
+        for(i = 0; i < alienShots.size(); i++){
+            shot_aux = alienShots.get(i);
+            if(shot_aux.intersects(ship)){
+                remove_shot.add(shot_aux);
+                alienShots.removeAll(remove_shot);
+                remove_shot.clear();
+                ship.setHealth();
+                
+                /** The cannon goes back to the start. */
+                ship.setPosition(200,700);
+                hit = true;
+            }
+        }
+        return hit;
+    }
+
+    /**
+    * This method creates the objects necessary to start the game.
+    * It also creates the music object, which plays in the background during the game
+    * and has a sound effect when the Player shoots.
+    */
+    public void startGame() {
+        
+        createScreen();
+        createCannon();
+        createBarrier();
+        createAliens(level);
+        music = new Music();
+        music.startMusic();
+    }
+
+    /**
+    * Methods that draw the elements: Cannon, Aliens, Barriers, and Shots.
+    * @param gc - from JavaFX's GraphicsContext
+    */
+    public void drawCannon(GraphicsContext gc){
+
+    gc.drawImage( ship.image, ship.pos_x, ship.pos_y );
+    } 
+
+    public void drawAliens(GraphicsContext gc){
+        int i;
+        for(i = 0; i < aliens.size(); i++){
+            gc.drawImage( aliens.get(i).image, aliens.get(i).pos_x, aliens.get(i).pos_y );
+        }
+        
+        for(i = 0; i < specialAliens.size(); i++){
+            gc.drawImage( specialAliens.get(i).image, specialAliens.get(i).pos_x, specialAliens.get(i).pos_y );
+        }
+    }
+
+    public void drawCannonShot(GraphicsContext gc){
+        int i;
+        for(i = 0; i < cannonShots.size(); i++){
+            gc.drawImage( cannonShots.get(i).image, cannonShots.get(i).pos_x, cannonShots.get(i).pos_y );
+        }
+    }
+
+    public void drawAlienShot(GraphicsContext gc){
+        int i;
+        for(i = 0; i < alienShots.size(); i++){
+            gc.drawImage( alienShots.get(i).image, alienShots.get(i).pos_x, alienShots.get(i).pos_y );
+        }
+    }
+
+    public void drawBarriers(GraphicsContext gc){
+        
+        int i;
+    
+        for(i = 0; i < barriers.size(); i++){
+            
+            gc.drawImage(barriers.get(i).image, barriers.get(i).pos_x, barriers.get(i).pos_y);
+        
+        }
+    }
+
+    /**
+    * This method draws the current lives of the cannon at the bottom edge of the screen.
+    * If the player is hit, a life is lost, and the game pauses.
+    */
+    public void drawLives(GraphicsContext gc){
+        
+        Image life_image = new Image("Images/life.png", 50, 50, false, false);
+        switch (ship.getHealth()) {
             case 3:
-                gc.drawImage(vida_imagem, 30, 810);
-                gc.drawImage(vida_imagem, 85, 810);
-                gc.drawImage(vida_imagem, 140, 810);
+                gc.drawImage(life_image, 30, 810);
+                gc.drawImage(life_image, 85, 810);
+                gc.drawImage(life_image, 140, 810);
                 break;
             case 2:
-                gc.drawImage(vida_imagem, 30, 810);
-                gc.drawImage(vida_imagem, 85, 810);
+                gc.drawImage(life_image, 30, 810);
+                gc.drawImage(life_image, 85, 810);
                 break;
             case 1:
-                gc.drawImage(vida_imagem, 30, 810);
+                gc.drawImage(life_image, 30, 810);
                 break;
             default:
                 break;
         }  
     }
-    
-    /**
-     * Reune os métodos de desenhar, para facilitar na compreensão.
-     */
-    public void desenhaElementos(GraphicsContext gc){
 
-        desenhaCanhao(gc);
-        desenhaAliens(gc);
-        desenhaTiroCanhao(gc);
-        desenhaBarreiras(gc);
-        desenhaTiroAliens(gc);
-        desenhaVidas(gc);
-    }
-    
     /**
-     * Método que reúne os métodos de mover, para facilitar a leitura. 
-     * @return fim - indica que os aliens chegaram na borda da tela e o jogo acaba.
-     */
-    public boolean moveElementos(String dificuldade){
-        boolean fim;
-        moveTirosCanhao();
-        fim = moveAliens(dificuldade);
-        moveTirosAlien(dificuldade);
-        moveAlienEspecial();
-        return fim;
+    * Combines the drawing methods for easier understanding.
+    */
+    public void drawElements(GraphicsContext gc){
+
+        drawCannon(gc);
+        drawAliens(gc);
+        drawCannonShot(gc);
+        drawBarriers(gc);
+        drawAlienShot(gc);
+        drawLives(gc);
     }
-    
+
     /**
-     * Método que reúne os métodos de colisão
-     * @return  atingido - caso o canhão seja atingido, devemos dar uma pause no jogo.
-     */
-    public boolean colisaoElementos(){
-        boolean atingido;
-        colisaoTiroBarreira(); 
-        atingido =  ColisaoCanhaoTiro();
-        colisaoTiroTiro();
-        return atingido;
+    * Combines the moving methods for easier reading. 
+    * @return end - indicates that the aliens reached the edge of the screen and the game ends.
+    */
+    public boolean moveElements(String difficulty){
+        boolean end;
+        moveCannonShots();
+        end = moveAliens(difficulty);
+        moveAlienShots(difficulty);
+        moveSpecialAlien();
+        return end;
     }
-    
+
     /**
-     * Método que apaga os Elementos Tiro, Barreira e Alien
-     * O método será útil para resetar o jogo quando o usuário morrer
-     *   e desejar recomeçar o jogo do zero.
-     */
-    public void apagaElementos(){
+    * Combines the collision methods.
+    * @return hit - if the cannon is hit, the game should pause.
+    */
+    public boolean collisionElements(){
+        boolean hit;
+        collisionShotBarrier(); 
+        hit =  cannonShotCollision();
+        collisionShotShot();
+        return hit;
+    }
+
+    /**
+    * Method that deletes the Shot, Barrier, and Alien elements.
+    * This method will be useful to reset the game when the player dies
+    * and wants to restart the game from the beginning.
+    */
+    public void deleteElements(){
         
-        ArrayList<Tiro> remove_tiro = new ArrayList<>();
-        ArrayList<Barreira> remove_barreira = new ArrayList<>();
+        ArrayList<Shot> remove_shot = new ArrayList<>();
+        ArrayList<Barrier> remove_barrier = new ArrayList<>();
         ArrayList<Alien> remove_aliens = new ArrayList<>();
-        Tiro tiro_aux;
-        Barreira barreira_aux;
+        Shot shot_aux;
+        Barrier barrier_aux;
         Alien  alien_aux;
 
         int i;
         
-        for(i = 0; i < tiroCanhao.size(); i++){
-            tiro_aux = tiroCanhao.get(i);
-            remove_tiro.add(tiro_aux);
+        for(i = 0; i < cannonShots.size(); i++){
+            shot_aux = cannonShots.get(i);
+            remove_shot.add(shot_aux);
         }
-        for(i = 0; i < tiroAliens.size(); i++){
-            tiro_aux = tiroAliens.get(i);
-            remove_tiro.add(tiro_aux);
+        for(i = 0; i < alienShots.size(); i++){
+            shot_aux = alienShots.get(i);
+            remove_shot.add(shot_aux);
         }
-         for(i = 0; i < barreiras.size(); i++){
-            barreira_aux =  barreiras.get(i);
-            remove_barreira.add(barreira_aux);
+        for(i = 0; i < barriers.size(); i++){
+            barrier_aux =  barriers.get(i);
+            remove_barrier.add(barrier_aux);
         }
         for(i = 0; i < aliens.size(); i++){
             alien_aux =  aliens.get(i);
             remove_aliens.add(alien_aux);
         }
 
-        if(remove_tiro.isEmpty() == false){
-            tiroCanhao.removeAll(remove_tiro);
-            tiroAliens.removeAll(remove_tiro);
-            remove_tiro.clear();
+        if(remove_shot.isEmpty() == false){
+            cannonShots.removeAll(remove_shot);
+            alienShots.removeAll(remove_shot);
+            remove_shot.clear();
         }
-        if(remove_barreira.isEmpty() == false){
-            barreiras.removeAll(remove_barreira);
-            remove_barreira.clear();
+        if(remove_barrier.isEmpty() == false){
+            barriers.removeAll(remove_barrier);
+            remove_barrier.clear();
         }
-         if(remove_aliens.isEmpty() == false){
+        if(remove_aliens.isEmpty() == false){
             aliens.removeAll(remove_aliens);
             remove_aliens.clear();
         }
     }
-    
-    
-    /** Retorna a fase que o jogador está. */
-    public int getFase(){
-        return fase;
+
+
+    /** Returns the level the player is currently on. */
+    public int getLevel(){
+        return level;
     }
-    
-    /**Acrescenta a fase do jogador. */
-    public void setFase(){
-        this.fase++;
+
+    /** Increases the player's level. */
+    public void setLevel(){
+        this.level++;
     }
-    
-    /** Retorna os pontos obtidos pelo jogador até o momento. */
-    public int getPontos(){
-        return pontos;
+
+    /** Returns the player's current score. */
+    public int getScore(){
+        return score;
     }
 }
