@@ -120,7 +120,7 @@ public class Engine{
         
         // To make it harder, the Player can shoot every 1.5 seconds
         if(System.currentTimeMillis() - cannonShotTimer > 1500){
-            Image shotImage = new Image("Images/cannonShot.png", 40, 40, false, false);
+            Image shotImage = new Image("Images/cannon_shot.png", 40, 40, false, false);
             Shot shot = new Shot(ship.pos_x, ship.pos_y - 1 , 5, 15, 1, shotImage);
             cannonShots.add(shot);
             music = new Music();
@@ -461,8 +461,8 @@ public class Engine{
     /**
         * Every 5 shots, the barrier image will change.
         */
-        Image damagedBarrier1 = new Image("Images/damaged_barrier.png", 150, 150, false, false);
-        Image damagedBarrier2 = new Image("Images/damaged_barrier2.png", 130, 130, false, false);
+        Image damagedBarrier1 = new Image("Images/damagedBarrier1.png", 150, 150, false, false);
+        Image damagedBarrier2 = new Image("Images/damagedBarrier2.png", 130, 130, false, false);
 
         int i, j;
         

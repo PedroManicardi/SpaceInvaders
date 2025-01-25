@@ -1,101 +1,100 @@
-package Elementos;
+package Elements;
 
 import javafx.scene.image.Image;
 import javafx.geometry.Rectangle2D;
 
 
-/** Definição da classe Elemento, 
-  classe mãe das classes Alien, Barreira, Canhão e Tiro.
+/** Definition of the Element class,
+  parent class of the Alien, Barrier, Cannon, and Shot classes.
 */
-public class Elemento {
+public class Element {
    
-    /** Cada Elemento terá uma posição. */
+    /** Each Element will have a position. */
     public int pos_x;
     public int pos_y;
     
-    /** Todo Elemento terá altura e largura para o tratamento de colisões. */
-    public int altura, largura;
+    /** Every Element will have height and width for collision handling. */
+    public int height, width;
     
-    /** Todo Elemento terá uma vida associada, a qual poderá perder ao longo do jogo. */
-    protected int vida;
+    /** Every Element will have an associated life, which may decrease during the game. */
+    protected int life;
     
-    /** Cada Elemento será representado por uma Imagem. */
-    public Image imagem;
+    /** Each Element will be represented by an Image. */
+    public Image image;
     
-    /**Construtor da classe Elemento. 
-     * @param pos_x - inteiro que representa a posição horizontal do elemento
-     * @param pos_y - inteiro que representa a posição vertical do elemento
-     * @param largura - inteiro que auxilia no tratamento de colisões
-     * @param altura - inteiro que auxilia no tratamento de colisões
-     * @param vida - representa o número de vidas do elemento
-     * @param imag- da classe Image que define a imagem do elemento
+    /** Constructor for the Element class. 
+     * @param pos_x - integer representing the horizontal position of the element
+     * @param pos_y - integer representing the vertical position of the element
+     * @param width - integer used for collision handling
+     * @param height - integer used for collision handling
+     * @param life - represents the number of lives of the element
+     * @param image - Image class instance defining the element's image
      */
-    public Elemento(int pos_x, int pos_y, int largura, int altura, int vida, Image imag){
+    public Element(int pos_x, int pos_y, int width, int height, int life, Image image){
         this.pos_x = pos_x;
         this.pos_y = pos_y;
-        this.largura = largura;
-        this.altura = altura;
-        this.vida = vida;
-        this.imagem = imag;
+        this.width = width;
+        this.height = height;
+        this.life = life;
+        this.image = image;
     }
 
-    /** Método que retorna a posição "vertical" do Elemento. */
+    /** Method that returns the "horizontal" position of the Element. */
     public int getPos_x() {
         return pos_x;
     }
     
-    /** Método que retorna a posição "horizontal" do Elemento.
-     *@return - posicao vertical do elemento
+    /** Method that returns the "vertical" position of the Element.
+     *@return - vertical position of the element
      */
     public int getPos_y() {
         return pos_y;
     }
     
-    /** Método que retorna a vida atual do Elemento. 
-     *@return - vida do elemento
+    /** Method that returns the current life of the Element. 
+     *@return - life of the element
      */
-    public int getVida(){
-        return this.vida;
+    public int getLife(){
+        return this.life;
     }
         
-    /** Método que diminui a vida do Elemento em uma unidade. */
-    public void setVida(){
-       this.vida--;
+    /** Method that decreases the life of the Element by one unit. */
+    public void setLife(){
+       this.life--;
     }
     
     /** 
-     * Método que altera a imagem do Elemento. 
-     *@param imagem - do Tipo Image que define a imagem do elemento
+     * Method that changes the image of the Element. 
+     *@param image - of type Image defining the element's image
      */
-    public void setImag(Image imagem){
-        this.imagem = imagem;
+    public void setImage(Image image){
+        this.image = image;
     }
     
-    /** Método que atualiza a posição do Elemento. */
-     public void setPosicao(int x, int y){
+    /** Method that updates the position of the Element. */
+     public void setPosition(int x, int y){
         this.pos_x = x;
         this.pos_y = y;
     }
      
-    /** Método que auxilia na movimentação dos Elementos. */
-    public void acrescentaPosicao(int x, int y){
+    /** Method that assists in moving the Elements. */
+    public void addPosition(int x, int y){
         this.pos_x += x;
         this.pos_y += y;
     }
     
     
     /**
-    Os métodos a seguir são responsáveis por detectar 
-    colisoes entre os elementos.
-    * @reeturn Rectangle2D - o retângulo ocupado pelo elemento
+    The following methods are responsible for detecting 
+    collisions between elements.
+    * @return Rectangle2D - the rectangle occupied by the element
     */
     public Rectangle2D getBoundary(){
-        return new Rectangle2D(pos_x , pos_y, largura, altura);
+        return new Rectangle2D(pos_x , pos_y, width, height);
     }
     
-    public boolean intersects(Elemento x){
+    public boolean intersects(Element x){
 
         return x.getBoundary().intersects(this.getBoundary());
     }  
 }
-

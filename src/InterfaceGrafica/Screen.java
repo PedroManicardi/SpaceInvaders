@@ -34,7 +34,7 @@ public class Screen {
      */
     public Screen(GraphicsContext gc, Engine engine){
         startImage = new Image("Images/start.png");
-        difficultiesImage = new Image("Images/difficulties.png");
+        difficultiesImage = new Image("Images/ difficulties.png");
         guideImage = new Image("Images/guide.png");
         backgroundImage = new Image("Images/background.png");
         this.gc = gc;
