@@ -1,6 +1,6 @@
 package Engine;
 import Elementos.*;
-import InterfaceGrafica.*;
+import InterfaceGraphic.*;
 
 import java.util.Random;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package GraphicalInterface;
+package InterfaceGraphic;
 
 import Engine.*;
 import javafx.animation.AnimationTimer;

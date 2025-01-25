@@ -22,7 +22,7 @@ public class Music {
         
         try{
             //The music file is located in the root of the project
-            music = AudioSystem.getAudioInputStream(new File("music.wav"));
+            music = AudioSystem.getAudioInputStream(new File("musica.wav"));
             clip = AudioSystem.getClip();
             clip.open(music);
             clip.start();
@@ -40,7 +40,7 @@ public class Music {
         
         try{
             /** The sound effect file is located in the root of the project */
-            music = AudioSystem.getAudioInputStream(new File("shot.wav"));
+            music = AudioSystem.getAudioInputStream(new File("tiro.wav"));
             clip2 = AudioSystem.getClip();
             clip2.open(music);
             clip2.start();
