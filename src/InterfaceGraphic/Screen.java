@@ -83,7 +83,7 @@ public class Screen {
     public void drawBackground(GraphicsContext g, String difficulty){
         g.drawImage(backgroundImage,0,0);
         gc.fillText("MODE " + difficulty, 430, 860);
-        gc.fillText("SCORE: " + Integer.toString(engine.getPoints()), 1000, 860);
+        gc.fillText("SCORE: " + Integer.toString(engine.getScore()), 1000, 860);
     }
     
     /**
@@ -91,14 +91,14 @@ public class Screen {
      */
     public void cannonHit(){
         gc.fillText("CANNON HIT", 200, 200 );
-        gc.fillText("YOU STILL HAVE " + engine.nave.getLife() + " LIVES", 200, 300);
+        gc.fillText("YOU STILL HAVE " + engine.ship.getLife() + " LIVES", 200, 300);
         gc.fillText("PRESS 'SPACE' TO CONTINUE", 200, 400);
     }
     
     /** 
      * This function shows a message when the player defeats all aliens and moves to the next level.
      */
-    public void msgWon(){
+    public void drawWonMessage(){
         gc.fillText("YOU WON.", 80, 100);
         gc.fillText("PRESS 'SPACE' TO PLAY THE NEXT LEVEL.", 80,200);
         gc.fillText("PRESS 'ESC' TO EXIT", 80, 300);
@@ -109,7 +109,7 @@ public class Screen {
      * when the cannon defeats all aliens.
      */
     public void msgNextLevel(){
-        gc.fillText("REMAINING LIVES: " + engine.nave.getLife(), 80, 400);
+        gc.fillText("REMAINING LIVES: " + engine.ship.getLife(), 80, 400);
         gc.fillText("NEXT LEVEL: " + (engine.getLevel() + 1), 80, 500);
     }
 
@@ -118,10 +118,10 @@ public class Screen {
      * the ship and pass the boundary.
      * If the user wants, they can press ESC and return to the menu.
      */
-    public void msgLost(){
+    public void drawLostMessage(){
         gc.fillText("DEFEAT!", 250, 300);
         gc.fillText("YOU COMPLETED " + (engine.getLevel() - 1) + " LEVELS", 250, 400);
-        gc.fillText("AND SCORED " + engine.getPoints() + " POINTS", 250, 500);
+        gc.fillText("AND SCORED " + engine.getScore() + " POINTS", 250, 500);
         gc.fillText("PRESS ESC TO RETURN TO THE MENU", 250, 600);
     }
 }

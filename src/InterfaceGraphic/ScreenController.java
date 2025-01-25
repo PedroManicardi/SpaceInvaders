@@ -136,7 +136,7 @@ public class ScreenController extends Application {
                         difficulties = false;
                         lost = false;
                         hit = false;
-                        engine.clearElements();
+                        engine.deleteElements();
                         engine.ship.reset();
                         engine.createAliens(1);
                         engine.createBarrier();
@@ -225,7 +225,7 @@ public class ScreenController extends Application {
             
             /** Check if the user defeated all the aliens. */
             else if(engine.aliens.size() <= 0){
-                engine.Screen.drawNextLevelMessage();
+                engine.Screen.msgNextLevel();
                 won = true;
                 
                 /** If the user wants to play the next level, reset the game. */
@@ -247,11 +247,11 @@ public class ScreenController extends Application {
                 engine.Screen.drawBackground(gc, difficulty);
                 engine.drawElements(gc);
                 
-                engine.createAlienShots();
+                engine.createAlienShot();
                 engine.createSpecialAlien();
                 
                 lost = engine.moveElements(difficulty);
-                hit = engine.checkCollisions();
+                hit = engine.cannonShotCollision();
                 
             }
             

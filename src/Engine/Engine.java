@@ -1,5 +1,5 @@
 package Engine;
-import Elementos.*;
+import Elements.*;
 import InterfaceGraphic.*;
 
 import java.util.Random;
@@ -23,7 +23,7 @@ public class Engine{
     GraphicsContext gc;
     
     /** Object of the Screen class responsible for creating the Display. */
-    public Screen screen;
+    public Screen Screen;
     
     /**
     * Player's score.
@@ -124,19 +124,19 @@ public class Engine{
             Shot shot = new Shot(ship.pos_x, ship.pos_y - 1 , 5, 15, 1, shotImage);
             cannonShots.add(shot);
             music = new Music();
-            music.playShotSound();
+            music.shotMusic();
             
             cannonShotTimer = System.currentTimeMillis();
         }
     }
     
     /**
-    * Creates the game's screen.
+    * Creates the game's Screen.
     */
     public void createScreen(){
         
-        screen = new Screen(gc, this);
-        screen.initialize();  
+        Screen = new Screen(gc, this);
+        Screen.start();  
     }
     
     /**
@@ -158,7 +158,7 @@ public class Engine{
         /** Generate a random value. */
         int value = (int) Math.floor(Math.random() * 300) + 1500; 
         
-        Image shotImg = new Image("Images/alienShot.png", 35, 45, false, false);
+        Image shotImg = new Image("Images/alien_shot.png", 35, 45, false, false);
         
         /** Shots happen at certain intervals. */
         if(System.currentTimeMillis() - alienShotTimer > value)
@@ -198,7 +198,7 @@ public class Engine{
         
     /**
      * Creates the vector of Red Aliens, which
-     * appear periodically at the top of the screen.
+     * appear periodically at the top of the Screen.
      */
     public void createSpecialAlien(){
         
@@ -276,7 +276,7 @@ public class Engine{
         for(i = 0; i < specialAlien.size(); i++){
             tempAlien =  specialAlien.get(i);
             
-            /** If the alien reaches the screen border, it should be removed. */
+            /** If the alien reaches the Screen border, it should be removed. */
             if(tempAlien.getPos_x() <= 2){
                 removeAlien.add(tempAlien);
             }
@@ -305,29 +305,29 @@ public class Engine{
     public void moveCannon(int direction){
         
         //Move to the right
-        if(cannon.getPos_x() >= 2 && direction == 0){
-            cannon.addPosition(-9, 0);
+        if(ship.getPos_x() >= 2 && direction == 0){
+            ship.addPosition(-9, 0);
         }
         
         //Move to the left
-        if(cannon.getPos_x() <= 1340  && direction == 1){
-            cannon.addPosition(9, 0);
+        if(ship.getPos_x() <= 1340  && direction == 1){
+            ship.addPosition(9, 0);
         }
     }
 
 
     /**
     *   Alters the positions of the cannon's shots 
-    *   Verifies if the shot is exceeding the screen limit to
+    *   Verifies if the shot is exceeding the Screen limit to
     *   remove it
     *   Also checks for collisions between shots and aliens
     *   If a collision occurs, both the shot and the alien are removed.
     */
     public void moveCannonShots(){
 
-        CannonShot tempShot;
+        Shot tempShot;
         Alien tempAlien;
-        ArrayList<CannonShot> removeShot = new ArrayList<>();
+        ArrayList<Shot> removeShot = new ArrayList<>();
         ArrayList<Alien> removeAlien = new ArrayList<>();
 
         int i,j;
@@ -364,7 +364,7 @@ public class Engine{
                 }
             }
             
-            /** If the shot is leaving the screen from the top. */
+            /** If the shot is leaving the Screen from the top. */
             else{
                 removeShot.add(tempShot); 
             }
@@ -393,8 +393,8 @@ public class Engine{
      */
     public void moveAlienShots(String difficulty){
 
-        AlienShot tempShot;
-        ArrayList<AlienShot> removeShot = new ArrayList<>();
+        Shot tempShot;
+        ArrayList<Shot> removeShot = new ArrayList<>();
         
         int i,j;
         for(i = 0; i < alienShots.size(); i++){
@@ -422,10 +422,10 @@ public class Engine{
      * In this case, both shots are removed.
      */
     public void collisionShotShot(){
-        CannonShot cannonShot;
-        AlienShot alienShot;
-        ArrayList<CannonShot> cannonShotsToRemove = new ArrayList<>();
-        ArrayList<AlienShot> alienShotsToRemove = new ArrayList<>();
+        Shot cannonShot;
+        Shot alienShot;
+        ArrayList<Shot> cannonShotsToRemove = new ArrayList<>();
+        ArrayList<Shot> alienShotsToRemove = new ArrayList<>();
         int i, j;
         
         for(i = 0; i < cannonShots.size(); i++){
@@ -453,10 +453,10 @@ public class Engine{
     */
     public void collisionShotBarrier(){
 
-        CannonShot cannonShot, alienShot;
-        Barrier tempBarrier;
-        ArrayList<CannonShot> removeShot = new ArrayList<>();
-        ArrayList<Barrier> removeBarrier = new ArrayList<>();
+        Shot cannonShot, alien_shot;
+        Barrier barrier_aux;
+        ArrayList<Shot> remove_shot = new ArrayList<>();
+        ArrayList<Barrier> remove_barrier = new ArrayList<>();
         
     /**
         * Every 5 shots, the barrier image will change.
@@ -469,26 +469,26 @@ public class Engine{
         for(i = 0; i < cannonShots.size(); i++){
             cannonShot = cannonShots.get(i);
             for(j = 0; j < barriers.size(); j++){
-                tempBarrier = barriers.get(j);
-                if(cannonShot.intersects(tempBarrier)){
-                    removeShot.add(cannonShot);
-                    tempBarrier.decreaseLife();
+                barrier_aux = barriers.get(j);
+                if(cannonShot.intersects(barrier_aux)){
+                    remove_shot.add(cannonShot);
+                    barrier_aux.setLife();
                     
                     /** If it receives 5 shots, the barrier image changes */
-                    if(tempBarrier.getLife() <= 10 && tempBarrier.getLife() > 5 ){                            
-                        tempBarrier.setImage(damagedBarrier1);
+                    if(barrier_aux.getLife() <= 10 && barrier_aux.getLife() > 5 ){                            
+                        barrier_aux.setImage(damagedBarrier1);
                     }
                     
                     /** If it receives 10 shots, the barrier image changes again */
-                    else if(tempBarrier.getLife() <= 5 && tempBarrier.getLife() > 0){
+                    else if(barrier_aux.getLife() <= 5 && barrier_aux.getLife() > 0){
     
-                        tempBarrier.setImage(damagedBarrier2);
-                        tempBarrier.setPosition(tempBarrier.getPos_x(),570);
+                        barrier_aux.setImage(damagedBarrier2);
+                        barrier_aux.setPosition(barrier_aux.getPos_x(),570);
                     }
                     
                     /** Receiving 15 shots, the barrier disappears */
-                    else if(tempBarrier.getLife() <= 0){
-                        removeBarrier.add(tempBarrier);
+                    else if(barrier_aux.getLife() <= 0){
+                        remove_barrier.add(barrier_aux);
                     }
                 }
             }
@@ -504,16 +504,16 @@ public class Engine{
                 if(alien_shot.intersects(barrier_aux)){
                     remove_shot.add(alien_shot);
                     
-                    barrier_aux.setHealth();
-                    if(barrier_aux.getHealth() <= 10 && barrier_aux.getHealth() > 5 ){                            
+                    barrier_aux.setLife();
+                    if(barrier_aux.getLife() <= 10 && barrier_aux.getLife() > 5 ){                            
                         barrier_aux.setImage(damagedBarrier1);
                     }
-                    else if(barrier_aux.getHealth() <= 5 && barrier_aux.getHealth() > 0){
+                    else if(barrier_aux.getLife() <= 5 && barrier_aux.getLife() > 0){
             
                         barrier_aux.setImage(damagedBarrier2);
                         barrier_aux.setPosition(barrier_aux.getPos_x(),570);
                     }
-                    else if(barrier_aux.getHealth() <= 0){
+                    else if(barrier_aux.getLife() <= 0){
                         remove_barrier.add(barrier_aux);
                     }
                 }
@@ -532,7 +532,7 @@ public class Engine{
             barriers.removeAll(remove_barrier);
             remove_barrier.clear();
         }
-
+    }
     /**
     * Method that checks for collisions between the alien shots
     * and the Cannon.
@@ -549,7 +549,7 @@ public class Engine{
                 remove_shot.add(shot_aux);
                 alienShots.removeAll(remove_shot);
                 remove_shot.clear();
-                ship.setHealth();
+                ship.setLife();
                 
                 /** The cannon goes back to the start. */
                 ship.setPosition(200,700);
@@ -569,7 +569,7 @@ public class Engine{
         createScreen();
         createCannon();
         createBarrier();
-        createAliens(level);
+        createAliens(phase);
         music = new Music();
         music.startMusic();
     }
@@ -589,8 +589,8 @@ public class Engine{
             gc.drawImage( aliens.get(i).image, aliens.get(i).pos_x, aliens.get(i).pos_y );
         }
         
-        for(i = 0; i < specialAliens.size(); i++){
-            gc.drawImage( specialAliens.get(i).image, specialAliens.get(i).pos_x, specialAliens.get(i).pos_y );
+        for(i = 0; i < specialAlien.size(); i++){
+            gc.drawImage( specialAlien.get(i).image, specialAlien.get(i).pos_x, specialAlien.get(i).pos_y );
         }
     }
 
@@ -620,13 +620,13 @@ public class Engine{
     }
 
     /**
-    * This method draws the current lives of the cannon at the bottom edge of the screen.
+    * This method draws the current lives of the cannon at the bottom edge of the Screen.
     * If the player is hit, a life is lost, and the game pauses.
     */
     public void drawLives(GraphicsContext gc){
         
         Image life_image = new Image("Images/life.png", 50, 50, false, false);
-        switch (ship.getHealth()) {
+        switch (ship.getLife()) {
             case 3:
                 gc.drawImage(life_image, 30, 810);
                 gc.drawImage(life_image, 85, 810);
@@ -659,7 +659,7 @@ public class Engine{
 
     /**
     * Combines the moving methods for easier reading. 
-    * @return end - indicates that the aliens reached the edge of the screen and the game ends.
+    * @return end - indicates that the aliens reached the edge of the Screen and the game ends.
     */
     public boolean moveElements(String difficulty){
         boolean end;
@@ -733,12 +733,12 @@ public class Engine{
 
     /** Returns the level the player is currently on. */
     public int getLevel(){
-        return level;
+        return phase;
     }
 
     /** Increases the player's level. */
     public void setLevel(){
-        this.level++;
+        this.phase++;
     }
 
     /** Returns the player's current score. */
