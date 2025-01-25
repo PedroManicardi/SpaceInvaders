@@ -61,9 +61,9 @@ public class Engine{
     public void createAliens(int phase){
         
         // Defining the image of the 3 types of Aliens
-        Image alien1 = new Image("Images/alien1.png", 40, 40, false, false);
-        Image alien2 = new Image("Images/alien2.png", 40, 40, false, false);
-        Image alien3 = new Image("Images/alien3.png", 40, 40, false, false);
+        Image alien1 = new Image("alien1.png", 40, 40, false, false);
+        Image alien2 = new Image("alien2.png", 40, 40, false, false);
+        Image alien3 = new Image("alien3.png", 40, 40, false, false);
         Image img = alien1;
         int i, j;
         
@@ -94,7 +94,7 @@ public class Engine{
     public void createBarrier(){
         
         // Initially uses the image of the undamaged barrier
-        Image barrierImage = new Image("Images/barrier.png", 150, 150, false, false);
+        Image barrierImage = new Image("barrier.png", 150, 150, false, false);
         Barrier b1 = new Barrier(100, 550, 110, 90, 15, barrierImage);
         Barrier b2 = new Barrier(450, 550, 110, 90, 15, barrierImage);
         Barrier b3 = new Barrier(800, 550, 110, 90, 15, barrierImage);
@@ -109,7 +109,7 @@ public class Engine{
     * Creates the Cannon object.
     */
     public void createCannon(){
-        Image cannonImage = new Image("Images/cannon.png", 40, 40, false, false);
+        Image cannonImage = new Image("cannon.png", 40, 40, false, false);
         ship = new Cannon(200,700, 40, 35, 3, cannonImage);
     }
     
@@ -120,7 +120,7 @@ public class Engine{
         
         // To make it harder, the Player can shoot every 1.5 seconds
         if(System.currentTimeMillis() - cannonShotTimer > 1500){
-            Image shotImage = new Image("Images/cannon_shot.png", 40, 40, false, false);
+            Image shotImage = new Image("cannon_shot.png", 40, 40, false, false);
             Shot shot = new Shot(ship.pos_x, ship.pos_y - 1 , 5, 15, 1, shotImage);
             cannonShots.add(shot);
             music = new Music();
@@ -158,7 +158,7 @@ public class Engine{
         /** Generate a random value. */
         int value = (int) Math.floor(Math.random() * 300) + 1500; 
         
-        Image shotImg = new Image("Images/alien_shot.png", 35, 45, false, false);
+        Image shotImg = new Image("alien_shot.png", 35, 45, false, false);
         
         /** Shots happen at certain intervals. */
         if(System.currentTimeMillis() - alienShotTimer > value)
@@ -202,7 +202,7 @@ public class Engine{
      */
     public void createSpecialAlien(){
         
-        Image image = new Image("Images/special_alien.png", 60, 60, false, false);    
+        Image image = new Image("special_alien.png", 60, 60, false, false);    
         
         int value = (int) Math.floor(Math.random() * 305) + 1500; 
         if(System.currentTimeMillis() - alienShotTimer > value && specialAlien.isEmpty())
@@ -461,8 +461,8 @@ public class Engine{
     /**
         * Every 5 shots, the barrier image will change.
         */
-        Image damagedBarrier1 = new Image("Images/damagedBarrier1.png", 150, 150, false, false);
-        Image damagedBarrier2 = new Image("Images/damagedBarrier2.png", 130, 130, false, false);
+        Image damagedBarrier1 = new Image("damagedBarrier1.png", 150, 150, false, false);
+        Image damagedBarrier2 = new Image("damagedBarrier2.png", 130, 130, false, false);
 
         int i, j;
         
@@ -625,7 +625,7 @@ public class Engine{
     */
     public void drawLives(GraphicsContext gc){
         
-        Image life_image = new Image("Images/life.png", 50, 50, false, false);
+        Image life_image = new Image("life.png", 50, 50, false, false);
         switch (ship.getLife()) {
             case 3:
                 gc.drawImage(life_image, 30, 810);

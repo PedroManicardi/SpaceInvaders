@@ -1,21 +1,29 @@
 package SpaceInvaders;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.Group;
 import javafx.stage.Stage;
+import InterfaceGraphic.ScreenController;
 
-/**
- * Main class of the project
- * @author pedro
- */
 public class SpaceInvadersMain extends Application {
+
     public static void main(String[] args) {
-        launch(args);  // Chama o método launch() da classe Application
+        launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) {
-        // Inicialização da interface gráfica (Exemplo)
-        primaryStage.setTitle("Space Invaders");
+    public void start(Stage primaryStage) throws Exception {
+        
+        ScreenController screenController = new ScreenController();
+
+        primaryStage.setTitle("SPACE INVADERS");
+        primaryStage.setScene(new Scene(new Group()));  
+        primaryStage.setResizable(false);
+        
+
+        screenController.start(primaryStage); 
+
         primaryStage.show();
     }
 }

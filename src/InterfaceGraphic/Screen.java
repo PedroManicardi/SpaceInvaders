@@ -33,10 +33,10 @@ public class Screen {
      * @param engine the Engine class
      */
     public Screen(GraphicsContext gc, Engine engine){
-        startImage = new Image("Images/start.png");
-        difficultiesImage = new Image("Images/ difficulties.png");
-        guideImage = new Image("Images/guide.png");
-        backgroundImage = new Image("Images/background.png");
+        startImage = new Image("start.png");
+        difficultiesImage = new Image(" difficulties.png");
+        guideImage = new Image("guide.png");
+        backgroundImage = new Image("background.png");
         this.gc = gc;
         this.engine = engine;
     }

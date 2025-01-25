@@ -89,7 +89,7 @@ public class ScreenController extends Application {
                 
         stage.setTitle("SPACE INVADERS");
         stage.setScene(scene);
-        stage.getIcons().add(new Image("Images/cannon.png"));
+        stage.getIcons().add(new Image("cannon.png"));
         stage.setResizable(false);
         stage.show();
         
